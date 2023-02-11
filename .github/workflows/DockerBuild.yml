@@ -1,0 +1,29 @@
+name: Docker
+
+on:
+  workflow_dispatch: {}
+  # schedule:
+  #   - cron: "0 16 * * 1"
+  push:
+    branches:
+      - main
+    paths:
+      - debian-custom/**
+  pull_request:
+    paths:
+      - debian-custom/**
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker:
+    name: docker build
+    uses: Docker-Collection/reusable-workflows/.github/workflows/docker-build.yml@main
+    with:
+      docker_name: "ghcr.io/docker-collection/debian-custom"
+      dockerfile: "debian-custom/Dockerfile"
+      docker_label_author: "Efina"
+      docker_label_title: "Custom Debian Custom"
+      docker_label_description: "Custom Debina installer for GitHub Action"
